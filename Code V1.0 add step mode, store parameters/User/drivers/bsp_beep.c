@@ -23,44 +23,12 @@
 #include "bsp_timer.h"
 /* Private typedef -----------------------------------------------------------*/
 
-//#define Beep(BitVal)  		    GPIO_WriteBit(GPIOB,GPIO_Pin_6,BitVal)
-
-
-
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/ 
-//定时器时钟源Fck_cnt = 72000000/(1+psc)=1000000Hz
-//定时器频率(freq) = 72000000/((1+psc)*(arr+1)) = 1000000/2000=500Hz
-//占空比(duty) = compare/(arr+1) = 1000/2000 = 50%
 uint16_t beep_arr = 1999;//蜂鸣器pwm的重载值
 uint16_t beep_psc = 71;//蜂鸣器pwm的预分频值，
 uint16_t beep_compare = 1000;//蜂鸣器pwm的比较值（决定占空比）
 
 /* Private function prototypes -----------------------------------------------*/  
 /* Private functions ---------------------------------------------------------*/
-/**
-  * @fun    void bsp_InitBeep
-  * @brief  初始化蜂鸣器
-  * @author huangzibo
-  * @param  None
-  *
-  * @retval 
-  */
-void bsp_InitMotor(void)
-{
-  GPIO_InitTypeDef GPIO_InitStructure;
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE); //开启端口时钟
-  
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-  
-}
-
-
-
 /**
   * @brief 初始化蜂鸣器
   * @param none

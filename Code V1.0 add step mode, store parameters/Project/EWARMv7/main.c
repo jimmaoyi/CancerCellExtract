@@ -58,8 +58,8 @@ uint16 M3T2 = 20;
 uint16 M3T3 = 20;
 uint16 M3T4 = 30;
 uint16 M4T1 = 10;
-uint16 MotoSpeed = 30;
-uint16 MotoSpeed1 = 30;
+uint16 MotoSpeed24 = 30;
+uint16 MotoSpeed13 = 30;
 uint16 MotoStop = 0;
 uint16 UpLimited = 999;
 uint16 DownLimited = 1;
@@ -111,8 +111,8 @@ int main(void)
         FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*7, M3T3);
         FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*8, M3T4);
         FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*9, M4T1);
-        FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*10, MotoSpeed);
-        
+        FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*10, MotoSpeed13);
+        FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*11, MotoSpeed24);
         FLASH_Lock();		//-结束修改
         
         FLASH_Unlock();		//-第一步
@@ -133,8 +133,8 @@ int main(void)
         M3T3 = (*(uint16*) (BANK2_WRITE_START_ADDR+2*7));
         M3T4 = (*(uint16*) (BANK2_WRITE_START_ADDR+2*8));
         M4T1 = (*(uint16*) (BANK2_WRITE_START_ADDR+2*9));
-        MotoSpeed = (*(uint16*) (BANK2_WRITE_START_ADDR+2*10));
-        
+        MotoSpeed13 = (*(uint16*) (BANK2_WRITE_START_ADDR+2*10));
+        MotoSpeed24 = (*(uint16*) (BANK2_WRITE_START_ADDR+2*11));
         Lcd_Puts(0,0,"System start"); 
         Lcd_Puts(0,1,"Press any key"); 
   }
@@ -171,8 +171,8 @@ int main(void)
         FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*7, M3T3);
         FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*8, M3T4);
         FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*9, M4T1);
-        FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*10, MotoSpeed);
-        //FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*11, paraHolder);
+        FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*10, MotoSpeed13);
+        FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*11, MotoSpeed24);
         FLASH_Lock();		//-结束修改 
       
       ModeAction = 1;  
@@ -195,8 +195,8 @@ int main(void)
         FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*7, M3T3);
         FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*8, M3T4);
         FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*9, M4T1);
-        FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*10, MotoSpeed);
-        //FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*11, paraHolder);
+        FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*10, MotoSpeed13);
+        FLASH_ProgramHalfWord(BANK2_WRITE_START_ADDR+2*11, MotoSpeed24);
         FLASH_Lock();	
       
       ModeAction = 3;  
@@ -234,7 +234,7 @@ int main(void)
       MV3((BitAction)1);
       MV4((BitAction)1);
       //PUMP START WORK
-      BEEP_SetDuty(MotoSpeed);
+      BEEP_SetDuty(MotoSpeed13);
       //WAIT FOR THE SETTED TIME OR PRSSURE OVER SETTING 
       BeepTime = 0;
       DelaySettingTime = M1T1;    //used to  delay time
@@ -341,7 +341,7 @@ int main(void)
       EMc((BitAction)1);
       
       //LINE3
-      BEEP_SetDuty(100);  //PUMP WORK 
+      BEEP_SetDuty(MotoSpeed24);  //PUMP WORK 
       
       //
       BeepTime = 0;
@@ -391,7 +391,7 @@ int main(void)
       EMf((BitAction)1);
       EMe((BitAction)1);
       
-      BEEP_SetDuty(MotoSpeed);  //PUMP WORK 
+      BEEP_SetDuty(MotoSpeed13);  //PUMP WORK 
       
       //WAIT FOR THE SETTED TIME OR PRSSURE OVER SETTING 
       BeepTime = 0;
@@ -492,7 +492,7 @@ int main(void)
       MV3((BitAction)1);
       MV4((BitAction)1);
       
-      BEEP_SetDuty(100);  //PUMP WORK 
+      BEEP_SetDuty(MotoSpeed24);  //PUMP WORK 
       BeepTime = 0;
       DelaySettingTime = M4T1;    //used to  delay time
 
@@ -570,15 +570,26 @@ void TouchValueHandle(uint8 *Buffer){
           
       break;      
     
-    case speed:
-      MotoSpeed = MotoSpeed + SetInc;
-      if(MotoSpeed > 98)
+    case speed13:
+      
+      MotoSpeed13 = MotoSpeed13 + SetInc;
+      if(MotoSpeed13 > 98)
         {
-          MotoSpeed = 100;
+          MotoSpeed13 = 100;
         }
           
       break;   
-    
+      
+    case speed24:
+      
+      MotoSpeed24 = MotoSpeed24 + SetInc;
+      if(MotoSpeed24 > 98)
+        {
+          MotoSpeed24 = 100;
+        }
+ 
+     break; 
+     
     case Step:
       SetInc = SetInc + 1;
       if(SetInc > 100)
@@ -710,12 +721,19 @@ void TouchValueHandle(uint8 *Buffer){
         
         case 11:
            
-        RefreshLedStatuse = speed;      
+        RefreshLedStatuse = speed13;      
        
        
         break;
         
          case 12:
+     
+        RefreshLedStatuse = speed24;      
+       
+      
+        break;
+        
+        case 13:
      
         RefreshLedStatuse = Step;      
        
@@ -819,14 +837,24 @@ void TouchValueHandle(uint8 *Buffer){
  
       break;       
       
-     case speed:
-      MotoSpeed = MotoSpeed - SetDec;
-      if(MotoSpeed < 31)
+     case speed13:
+      MotoSpeed13 = MotoSpeed13 - SetDec;
+      if(MotoSpeed13 < 11)
         {
-          MotoSpeed = 30;
+          MotoSpeed13 = 10;
         }
           
-      break;      
+      break; 
+      
+      case speed24:
+        
+      MotoSpeed24 = MotoSpeed24 - SetDec;
+      if(MotoSpeed24 < 11)
+        {
+          MotoSpeed24 = 10;
+        }
+          
+      break; 
       
     case MT12:
       M1T2 = M1T2 - SetDec;

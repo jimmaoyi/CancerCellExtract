@@ -49,8 +49,9 @@ typedef enum
   MT31 = (uint8)0x06,/* 允许添加新设备状态 */
   MT34 = (uint8)0x09,/* 确认状态 */  
   MT41 = (uint8)0x0A,
-  speed = (uint8)0x0B,
-  Step = (uint8)0x0C,
+  speed13 = (uint8)0x0B,
+  speed24 = (uint8)0x0C,
+  Step = (uint8)0x0D,
 }DisplayRefreshLedStatuse_TypeDef;
 
 extern uint8 StandbyFlag;
@@ -95,7 +96,8 @@ extern unsigned char strTemp7[8] ;
 
 extern uint8 mode ;
 extern uint8 SetInc;
-extern uint16 MotoSpeed;
+extern uint16 MotoSpeed13;
+extern uint16 MotoSpeed24;
 extern uint16 M1T1;
 extern uint16 M1T2;
 extern uint16 M1T3;

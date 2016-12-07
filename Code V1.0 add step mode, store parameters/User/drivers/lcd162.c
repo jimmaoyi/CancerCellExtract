@@ -281,14 +281,25 @@ void displayStatuse(DisplayRefreshLedStatuse_TypeDef status){
       Lcd_Puts(DispPos_X,1,strTemp3);
       break;      
     
-    case speed:
+    case speed13:
+      
       Lcd_Write_Command( 0x01,1); //显示清屏 
       //DelayMs(15); //延时5ms 
-      Lcd_Puts(0,0,"Set Moto Speed:");      
-      tr_2(MotoSpeed);
-      Lcd_Puts(DispPos_X,1,strTemp2);     
+      Lcd_Puts(0,0,"Set Moto Speed1:");      
+      tr_3(MotoSpeed13);
+      Lcd_Puts(DispPos_X,1,strTemp3);     
       
-      break;      
+      break;
+      
+    case speed24:
+      
+      Lcd_Write_Command( 0x01,1); //显示清屏 
+      //DelayMs(15); //延时5ms 
+      Lcd_Puts(0,0,"Set Moto Speed2:");      
+      tr_3(MotoSpeed24);
+      Lcd_Puts(DispPos_X,1,strTemp3);     
+      
+      break;  
       
     case MT12:
       Lcd_Write_Command( 0x01,1); //显示清屏 
