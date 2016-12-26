@@ -1,21 +1,3 @@
-/**
-******************************************************************************
-* @file    bsp_usart.c
-* @author  Wireless Protocol Stack Develop-Dept.
-* @version --
-* @date    2015/12/22 ÐÇÆÚ¶þ,Administrator
-* @brief  This file
-*
-* @verbatim  
-*     
-******************************************************************************
-* @attention
-*     
-*     
-*
-* <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-******************************************************************************
-*/
 
 /* Includes ------------------------------------------------------------------*/
 
@@ -361,6 +343,4 @@ void SendMessageusart2(uint8 *Buffer1, uint8 length)
     while (USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET);
   }
 }
-
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/ 
 

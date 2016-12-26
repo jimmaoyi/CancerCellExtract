@@ -1,22 +1,4 @@
-/**
-  ******************************************************************************
-  * @file    bsp_beep.h
-  * @author  Wireless Protocol Stack Develop-Dept.
-  * @version --
-  * @date    2016/2/16 ÐÇÆÚ¶þ,Administrator
-  * @brief  This file 
-  *
-  * @verbatim  
-  *
-  ******************************************************************************
-  * @attention
-  *     
-  *     
-  *
-  * <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-  ******************************************************************************
-  */
-  
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _bsp_beep_H
 #define	_bsp_beep_H
@@ -67,4 +49,3 @@ extern uint16_t BEEP_GetFreq(void);
 #endif
 
 #endif /* _bsp_beep_H */
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/

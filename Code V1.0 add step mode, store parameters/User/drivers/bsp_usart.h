@@ -1,21 +1,3 @@
-/**
-  ******************************************************************************
-  * @file    bsp_usart.h
-  * @author  Wireless Protocol Stack Develop-Dept.
-  * @version --
-  * @date    2015/12/23 ÐÇÆÚÈý,Administrator
-  * @brief  This file 
-  *
-  * @verbatim  
-  *
-  ******************************************************************************
-  * @attention
-  *     
-  *     
-  *
-  * <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-  ******************************************************************************
-  */
   
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _bsp_usart_H
@@ -48,6 +30,4 @@ extern void SendMessageusart2(uint8 *Buffer1, uint8 length);
 #endif
 
 #endif /* _bsp_usart_H */
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/
-
 

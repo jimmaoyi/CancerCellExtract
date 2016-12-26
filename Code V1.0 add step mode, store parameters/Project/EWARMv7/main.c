@@ -1,21 +1,3 @@
-/**
-******************************************************************************
-* @file    main.c
-* @author  Wireless Protocol Stack Develop-Dept.
-* @version --
-* @date    2016/7/1 FRI,Administrator
-* @brief  This file
-*
-* @verbatim  
-*     
-******************************************************************************
-* @attention
-*     
-*     
-*
-* <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-******************************************************************************
-*/
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
@@ -41,6 +23,8 @@ uint8 PowerFlag = 1;
 uint8 MenuCount = 0;
 uint8 StandbyFlag = 0;
 uint8 Minute_Ini = 0;
+uint8 Motowork_flg = 0;
+uint8 pressureOK = 0;
 
 DisplayRefreshLedStatuse_TypeDef RefreshLedStatuse; //定义枚举变量刷新LED的显示状态
 
@@ -48,18 +32,19 @@ uint8 statusRefreshed = 0;
 uint8 mode = 0;
 uint8 ModeRunFinished = 1;
 uint8 ModeAction = 0;
-uint16 M1T1 = 20;
+uint16 M1T1 = 200;
 uint16 M1T2 = 20;
 uint16 M1T3 = 20;
 uint16 M1T4 = 10;
 uint16 M2T1 = 10;
-uint16 M3T1 = 10;
+uint16 M3T1 = 200;
 uint16 M3T2 = 20;
 uint16 M3T3 = 20;
 uint16 M3T4 = 30;
 uint16 M4T1 = 10;
 uint16 MotoSpeed24 = 30;
-uint16 MotoSpeed13 = 30;
+uint16 MotoSpeed13 = 35
+;
 uint16 MotoStop = 0;
 uint16 UpLimited = 999;
 uint16 DownLimited = 1;
@@ -67,7 +52,7 @@ uint8 SetInc = 1;
 uint8 SetDec = 1;
 
 //更新参数时修改下面的holder
-uint16 paraHolder = 0x0235 ;
+uint16 paraHolder = 0x1236 ;
 /* Private function prototypes -----------------------------------------------*/  
 
 void TouchValueHandle(uint8 *Buffer);
@@ -92,7 +77,7 @@ int main(void)
   //bsp_InitMotor();/* 振动马达初始化 */
   //MONI_EEPROM_init();
   bsp_KeyInit();         
-        
+  bsp_KeyPA8Init();     //pa8 for detect over pressure   
   BEEP_SetFreq(20000);
   BEEP_SetDuty(MotoStop); 
   
@@ -211,7 +196,12 @@ int main(void)
      
     }   
     
-    
+    if (1 == bsp_CheckTimer(5)){   //read card success delay 5s
+      
+      ModeAction = 5;  
+      bsp_StopTimer(5);       
+     
+    }
     switch(ModeAction)  //ONE KEY DECIDE MODE NUMBER
     {
       case 0x01:
@@ -235,18 +225,452 @@ int main(void)
       MV4((BitAction)1);
       //PUMP START WORK
       BEEP_SetDuty(MotoSpeed13);
+      Motowork_flg = 1;
       //WAIT FOR THE SETTED TIME OR PRSSURE OVER SETTING 
-      BeepTime = 0;
-      DelaySettingTime = M1T1;    //used to  delay time
+      //BeepTime = 0;
+      //DelaySettingTime = M1T1;    //used to  delay time
 
       while(PowerFlag == 1)   //LINE4
       {
         TouchValueHandle(USART2MemoryBuffer);
-        if(1 == TimeOutFlag)  //AND PRESSURE AJUDGMENT
+        //if(1 == TimeOutFlag)  //AND PRESSURE AJUDGMENT
+        //{
+        //  TimeOutFlag = 0;
+        //  break;
+        //}
+        if(1 == pressureOK){
+          pressureOK = 0; 
+          break;
+        }
+        
+      }
+      
+      EMb((BitAction)0);
+      EMc((BitAction)0);
+      EMd((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = M1T2;    //used to  delay time
+
+      while(PowerFlag == 1)   //LINE5
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
         {
           TimeOutFlag = 0;
           break;
         }
+      }
+      
+      EMb((BitAction)1);
+      EMd((BitAction)1);
+      EMf((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = M1T3;    //used to  delay time
+
+      while(PowerFlag == 1)   //LINE5
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      EMb((BitAction)0);
+      EMd((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = M1T4;    //used to  delay time
+
+      while(PowerFlag == 1)   //LINE6
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      BEEP_SetDuty(MotoStop);   //3.3V MAYBE IS PROBLEM SHOULD BE 5v
+      Motowork_flg = 0;
+      
+      
+      EMa((BitAction)1);
+      EMc((BitAction)1);
+      EMe((BitAction)1);
+      EMf((BitAction)1);
+      MV1((BitAction)0);
+      MV2((BitAction)0);
+      MV3((BitAction)0);
+      MV4((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = 3;    //used to  delay time  paiqi
+
+      while(PowerFlag == 1)   //LINE6
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      EMa((BitAction)0);
+      EMb((BitAction)0);
+      EMc((BitAction)0);
+      EMd((BitAction)0);
+      EMf((BitAction)0);
+      EMe((BitAction)0);
+      
+      
+      ModeAction = 0; 
+      statusRefreshed = 0;
+      
+      ModeRunFinished = 1;
+      Lcd_Write_Command( 0x01,1); //显示清屏 
+      DelayMs(15); //延时5ms   
+      Lcd_Puts(0,0,"Mode1 finished.");
+      
+      break;
+      
+      case 0x02:
+      Lcd_Write_Command( 0x01,1); //显示清屏 
+      DelayMs(15); //延时5ms   
+      Lcd_Puts(0,0,"Running Mode2...");   
+        
+      ModeRunFinished = 0;
+      Minute_Ini = calendar.minute;
+      // LINE 2  
+      MV1((BitAction)0);
+      MV2((BitAction)0);
+      MV3((BitAction)0);
+      MV4((BitAction)0);
+      EMd((BitAction)0);
+      EMf((BitAction)0);
+      EMe((BitAction)0);
+      
+      EMa((BitAction)1);
+      EMb((BitAction)1);
+      EMc((BitAction)1);
+      
+      //LINE3
+      BEEP_SetDuty(MotoSpeed24);  //PUMP WORK 
+      Motowork_flg = 1;
+      //
+      BeepTime = 0;
+      DelaySettingTime = M2T1;    //used to  delay time
+
+      while(PowerFlag == 1)   //LINE4
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      BEEP_SetDuty(MotoStop);  //PUMP STOP WORK 
+      Motowork_flg = 0;
+      
+      EMa((BitAction)0);
+      EMb((BitAction)0);
+      EMc((BitAction)0);
+      
+      ModeAction = 0;
+   
+      ModeRunFinished = 1;
+      statusRefreshed = 0;
+      Lcd_Write_Command( 0x01,1); //显示清屏 
+      DelayMs(15); //延时5ms   
+      Lcd_Puts(0,0,"Mode2 finished.");
+      break;
+      
+      case 0x03:
+      Lcd_Write_Command( 0x01,1); //显示清屏 
+      DelayMs(15); //延时5ms   
+      Lcd_Puts(0,0,"Running Mode3...");   
+        
+      ModeRunFinished = 0;
+      Minute_Ini = calendar.minute;
+      // LINE1  
+      MV1((BitAction)1);
+      MV2((BitAction)1);
+      MV3((BitAction)0);
+      MV4((BitAction)1);
+      EMa((BitAction)1);
+      EMb((BitAction)1);
+      EMc((BitAction)1);
+      EMd((BitAction)1);
+      EMf((BitAction)1);
+      EMe((BitAction)1);
+      
+      BEEP_SetDuty(MotoSpeed13);  //PUMP WORK 
+      Motowork_flg = 1;
+      //WAIT FOR THE SETTED TIME OR PRSSURE OVER SETTING 
+     // BeepTime = 0;
+     // DelaySettingTime = M3T1;    //used to  delay time
+
+      while(PowerFlag == 1)   //LINE4
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        //if(1 == TimeOutFlag)  //AND PRESSURE AJUDGMENT
+        //{
+        //  TimeOutFlag = 0;
+       //   break;
+       // }
+        if(1 == pressureOK){
+          pressureOK = 0; 
+          break;
+        }
+      }
+      
+      EMa((BitAction)0);
+      EMd((BitAction)0);
+        
+      BeepTime = 0;
+      DelaySettingTime = M3T2;    //used to  delay time
+      while(PowerFlag == 1)   //LINE5
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      EMd((BitAction)1);
+      EMf((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = M3T3;    //used to  delay time
+      while(PowerFlag == 1)   //LINE5
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      EMd((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = M3T4;    //used to  delay time
+      while(PowerFlag == 1)   //LINE5
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      BEEP_SetDuty(MotoStop);   //3.3V MAYBE IS PROBLEM SHOULD BE 5v
+      Motowork_flg = 0;
+      
+      //EMa((BitAction)1);
+      EMe((BitAction)1);
+      EMf((BitAction)1);
+      MV1((BitAction)0);
+      MV2((BitAction)0);
+      MV3((BitAction)0);
+      MV4((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = 3;    //used to  delay time  paiqi
+
+      while(PowerFlag == 1)   //LINE6
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      EMa((BitAction)0);
+      EMb((BitAction)0);
+      EMc((BitAction)0);
+      EMd((BitAction)0);
+      EMf((BitAction)0);
+      EMe((BitAction)0);
+      MV1((BitAction)0);
+      MV2((BitAction)0);
+      MV3((BitAction)0);
+      MV4((BitAction)0);
+      ModeAction = 0;
+  
+      ModeRunFinished = 1;
+      statusRefreshed = 0;
+      Lcd_Write_Command( 0x01,1); //显示清屏 
+      DelayMs(15); //延时5ms   
+      Lcd_Puts(0,0,"Mode3 finished.");
+      break;
+      
+      case 0x04:
+      Lcd_Write_Command( 0x01,1); //显示清屏 
+      DelayMs(15); //延时5ms   
+      Lcd_Puts(0,0,"Running Mode4...");   
+        
+      ModeRunFinished = 0;
+      Minute_Ini = calendar.minute;
+      
+      //close all EM MV
+      EMa((BitAction)1);
+      EMb((BitAction)1);
+      EMc((BitAction)1);
+      EMd((BitAction)1);
+      EMf((BitAction)1);
+      EMe((BitAction)1);
+      MV1((BitAction)1);
+      MV2((BitAction)1);
+      MV3((BitAction)1);
+      MV4((BitAction)1);
+      //PUMP START WORK
+      BEEP_SetDuty(MotoSpeed24);
+      Motowork_flg = 1;
+      //WAIT FOR THE SETTED TIME OR PRSSURE OVER SETTING 
+      //BeepTime = 0;
+      //DelaySettingTime = M1T1;    //used to  delay time
+
+      while(PowerFlag == 1)   //LINE4
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        //if(1 == TimeOutFlag)  //AND PRESSURE AJUDGMENT
+        //{
+        //  TimeOutFlag = 0;
+        //  break;
+        //}
+        if(1 == pressureOK){
+          pressureOK = 0; 
+          break;
+        }
+        
+      }
+      
+      
+      //LINE1  
+      EMa((BitAction)0);
+      EMb((BitAction)0);
+      EMc((BitAction)0);
+      EMd((BitAction)0);
+      EMf((BitAction)0);
+      //EMe((BitAction)1);
+      
+      //MV1((BitAction)1);
+      //MV2((BitAction)1);
+      //MV3((BitAction)1);
+      // MV4((BitAction)1);
+      
+      //BEEP_SetDuty(MotoSpeed24);  //PUMP WORK 
+      //Motowork_flg = 1;
+      
+      BeepTime = 0;
+      DelaySettingTime = M4T1;    //used to  delay time
+
+      while(PowerFlag == 1)   //LINE4
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      BEEP_SetDuty(MotoStop);  //PUMP STOP WORK 
+      Motowork_flg = 0;
+      
+      EMa((BitAction)1);
+      EMc((BitAction)1);
+      EMe((BitAction)1);
+      EMf((BitAction)1);
+      MV1((BitAction)0);
+      MV2((BitAction)0);
+      MV3((BitAction)0);
+      MV4((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = 3;    //used to  delay time  paiqi
+
+      while(PowerFlag == 1)   //LINE6
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
+      
+      EMa((BitAction)0);
+      EMc((BitAction)0);
+      EMf((BitAction)0);
+      EMe((BitAction)0);
+      TouchValueHandle(USART2MemoryBuffer);
+      MV1((BitAction)0);
+      MV2((BitAction)0);
+      MV3((BitAction)0);
+      MV4((BitAction)0);
+      ModeAction = 0;
+
+      ModeRunFinished = 1;
+      statusRefreshed = 0;
+      Lcd_Write_Command( 0x01,1); //显示清屏 
+      DelayMs(15); //延时5ms   
+      Lcd_Puts(0,0,"Mode4 finished.");
+      break;
+      
+      case 0x05:
+        
+      Lcd_Write_Command( 0x01,1); //显示清屏 
+      DelayMs(15); //延时5ms   
+      Lcd_Puts(0,0,"Running Mode5..."); 
+      
+      ModeRunFinished = 0;
+      Minute_Ini = calendar.minute;
+      //close all EM MV
+      EMa((BitAction)1);
+      EMb((BitAction)1);
+      EMc((BitAction)1);
+      EMd((BitAction)1);
+      EMf((BitAction)1);
+      EMe((BitAction)1);
+      MV1((BitAction)1);
+      MV2((BitAction)1);
+      MV3((BitAction)1);
+      MV4((BitAction)1);
+      //PUMP START WORK
+      BEEP_SetDuty(MotoSpeed13);
+      Motowork_flg = 1;
+      //WAIT FOR THE SETTED TIME OR PRSSURE OVER SETTING 
+      //BeepTime = 0;
+      //DelaySettingTime = M1T1;    //used to  delay time
+
+      while(PowerFlag == 1)   //LINE4
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        //if(1 == TimeOutFlag)  //AND PRESSURE AJUDGMENT
+        //{
+        //  TimeOutFlag = 0;
+        //  break;
+        //}
+        if(1 == pressureOK){
+          pressureOK = 0; 
+          break;
+        }
+        
       }
       
       EMb((BitAction)0);
@@ -298,51 +722,42 @@ int main(void)
       }
       
       BEEP_SetDuty(MotoStop);   //3.3V MAYBE IS PROBLEM SHOULD BE 5v
+      Motowork_flg = 0;
       
-      EMa((BitAction)0);
-      EMb((BitAction)0);
-      EMc((BitAction)0);
-      EMd((BitAction)0);
-      EMf((BitAction)0);
-      EMe((BitAction)0);
-      MV1((BitAction)0);
-      MV2((BitAction)0);
-      MV3((BitAction)0);
-      MV4((BitAction)0);
-      
-      ModeAction = 0; 
-      statusRefreshed = 0;
-      
-      ModeRunFinished = 1;
-      Lcd_Write_Command( 0x01,1); //显示清屏 
-      DelayMs(15); //延时5ms   
-      Lcd_Puts(0,0,"Mode1 finished.");
-      
-      break;
-      
-      case 0x02:
-      Lcd_Write_Command( 0x01,1); //显示清屏 
-      DelayMs(15); //延时5ms   
-      Lcd_Puts(0,0,"Running Mode2...");   
-        
-      ModeRunFinished = 0;
-      Minute_Ini = calendar.minute;
-      // LINE 2  
-      MV1((BitAction)0);
-      MV2((BitAction)0);
-      MV3((BitAction)0);
-      MV4((BitAction)0);
-      EMd((BitAction)0);
-      EMf((BitAction)0);
-      EMe((BitAction)0);
       
       EMa((BitAction)1);
+      EMc((BitAction)1);
+      EMe((BitAction)1);
+      EMf((BitAction)1);
+      MV1((BitAction)0);
+      MV2((BitAction)0);
+      MV3((BitAction)0);
+      MV4((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = 3;    //used to  delay time  paiqi
+
+      while(PowerFlag == 1)   //LINE6
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }     
+  
+      EMd((BitAction)0);
+      EMf((BitAction)0);
+      EMe((BitAction)0);
+      
+      EMa((BitAction)1);                //begain mode2
       EMb((BitAction)1);
       EMc((BitAction)1);
       
       //LINE3
       BEEP_SetDuty(MotoSpeed24);  //PUMP WORK 
-      
+      Motowork_flg = 1;
       //
       BeepTime = 0;
       DelaySettingTime = M2T1;    //used to  delay time
@@ -358,29 +773,12 @@ int main(void)
       }
       
       BEEP_SetDuty(MotoStop);  //PUMP STOP WORK 
+      Motowork_flg = 0;
+      //EMa((BitAction)0);
+      //EMb((BitAction)0);
+      //EMc((BitAction)0);
       
-      EMa((BitAction)0);
-      EMb((BitAction)0);
-      EMc((BitAction)0);
-      
-      ModeAction = 0;
-   
-      ModeRunFinished = 1;
-      statusRefreshed = 0;
-      Lcd_Write_Command( 0x01,1); //显示清屏 
-      DelayMs(15); //延时5ms   
-      Lcd_Puts(0,0,"Mode2 finished.");
-      break;
-      
-      case 0x03:
-      Lcd_Write_Command( 0x01,1); //显示清屏 
-      DelayMs(15); //延时5ms   
-      Lcd_Puts(0,0,"Running Mode3...");   
-        
-      ModeRunFinished = 0;
-      Minute_Ini = calendar.minute;
-      // LINE1  
-      MV1((BitAction)1);
+      MV1((BitAction)1);       //begain mode3
       MV2((BitAction)1);
       MV3((BitAction)0);
       MV4((BitAction)1);
@@ -392,17 +790,21 @@ int main(void)
       EMe((BitAction)1);
       
       BEEP_SetDuty(MotoSpeed13);  //PUMP WORK 
-      
+      Motowork_flg = 1;
       //WAIT FOR THE SETTED TIME OR PRSSURE OVER SETTING 
-      BeepTime = 0;
-      DelaySettingTime = M3T1;    //used to  delay time
+      //BeepTime = 0;
+      //DelaySettingTime = M3T1;    //used to  delay time
 
       while(PowerFlag == 1)   //LINE4
       {
         TouchValueHandle(USART2MemoryBuffer);
-        if(1 == TimeOutFlag)  //AND PRESSURE AJUDGMENT
-        {
-          TimeOutFlag = 0;
+        //if(1 == TimeOutFlag)  //AND PRESSURE AJUDGMENT
+        //{
+        //  TimeOutFlag = 0;
+        //  break;
+        //}
+        if(1 == pressureOK){
+          pressureOK = 0; 
           break;
         }
       }
@@ -452,6 +854,28 @@ int main(void)
       }
       
       BEEP_SetDuty(MotoStop);   //3.3V MAYBE IS PROBLEM SHOULD BE 5v
+      Motowork_flg = 0;
+      
+      //EMa((BitAction)1);
+      EMe((BitAction)1);
+      EMf((BitAction)1);
+      MV1((BitAction)0);
+      MV2((BitAction)0);
+      MV3((BitAction)0);
+      MV4((BitAction)0);
+      
+      BeepTime = 0;
+      DelaySettingTime = 3;    //used to  delay time  paiqi
+
+      while(PowerFlag == 1)   //LINE6
+      {
+        TouchValueHandle(USART2MemoryBuffer);
+        if(1 == TimeOutFlag)  
+        {
+          TimeOutFlag = 0;
+          break;
+        }
+      }
       
       EMa((BitAction)0);
       EMb((BitAction)0);
@@ -469,58 +893,10 @@ int main(void)
       statusRefreshed = 0;
       Lcd_Write_Command( 0x01,1); //显示清屏 
       DelayMs(15); //延时5ms   
-      Lcd_Puts(0,0,"Mode3 finished.");
+      Lcd_Puts(0,0,"Mode5 finished.");
+      
       break;
       
-      case 0x04:
-      Lcd_Write_Command( 0x01,1); //显示清屏 
-      DelayMs(15); //延时5ms   
-      Lcd_Puts(0,0,"Running Mode4...");   
-        
-      ModeRunFinished = 0;
-      Minute_Ini = calendar.minute;
-      //LINE1  
-      EMa((BitAction)0);
-      EMb((BitAction)0);
-      EMc((BitAction)0);
-      EMd((BitAction)0);
-      EMf((BitAction)0);
-      EMe((BitAction)1);
-      
-      MV1((BitAction)1);
-      MV2((BitAction)1);
-      MV3((BitAction)1);
-      MV4((BitAction)1);
-      
-      BEEP_SetDuty(MotoSpeed24);  //PUMP WORK 
-      BeepTime = 0;
-      DelaySettingTime = M4T1;    //used to  delay time
-
-      while(PowerFlag == 1)   //LINE4
-      {
-        TouchValueHandle(USART2MemoryBuffer);
-        if(1 == TimeOutFlag)  
-        {
-          TimeOutFlag = 0;
-          break;
-        }
-      }
-      
-      BEEP_SetDuty(MotoStop);  //PUMP STOP WORK 
-      EMe((BitAction)0);
-      TouchValueHandle(USART2MemoryBuffer);
-      MV1((BitAction)0);
-      MV2((BitAction)0);
-      MV3((BitAction)0);
-      MV4((BitAction)0);
-      ModeAction = 0;
-
-      ModeRunFinished = 1;
-      statusRefreshed = 0;
-      Lcd_Write_Command( 0x01,1); //显示清屏 
-      DelayMs(15); //延时5ms   
-      Lcd_Puts(0,0,"Mode4 finished.");
-      break;
       
       default:
       break;       
@@ -957,7 +1333,7 @@ void TouchValueHandle(uint8 *Buffer){
     {
       
       mode++;
-      if(mode == 5)mode = 0;           
+      if(mode == 6)mode = 0;           
       statusRefreshed = 1;   
       
       switch(mode)
@@ -968,7 +1344,7 @@ void TouchValueHandle(uint8 *Buffer){
         bsp_StopTimer(2);  
         bsp_StopTimer(3);  
         bsp_StopTimer(4);   
-        
+        bsp_StopTimer(5); 
         break;
         
         case 2:
@@ -977,7 +1353,7 @@ void TouchValueHandle(uint8 *Buffer){
         bsp_StopTimer(1);  
         bsp_StopTimer(3);  
         bsp_StopTimer(4);  
- 
+        bsp_StopTimer(5); 
         break;
         
         case 3:
@@ -986,7 +1362,7 @@ void TouchValueHandle(uint8 *Buffer){
         bsp_StopTimer(1);  
         bsp_StopTimer(2);  
         bsp_StopTimer(4);  
-        
+        bsp_StopTimer(5);        
         break;
         
         case 4:
@@ -994,7 +1370,17 @@ void TouchValueHandle(uint8 *Buffer){
         bsp_StartTimer(4,5000);   //delay 4s again 
         bsp_StopTimer(1);  
         bsp_StopTimer(3);  
-        bsp_StopTimer(2);          
+        bsp_StopTimer(2);   
+        bsp_StopTimer(5); 
+        break;
+        
+        case 5:
+        ModeAction = 0;
+        bsp_StartTimer(5,5000);   //delay 4s again 
+        bsp_StopTimer(1);  
+        bsp_StopTimer(3);  
+        bsp_StopTimer(2); 
+        bsp_StopTimer(4);
         break;
         
         case 0:
@@ -1003,6 +1389,7 @@ void TouchValueHandle(uint8 *Buffer){
         bsp_StopTimer(3);  
         bsp_StopTimer(2);
         bsp_StopTimer(4); 
+        bsp_StopTimer(5);
         break;
         
         default:
@@ -1019,8 +1406,5 @@ void TouchValueHandle(uint8 *Buffer){
   memset(Buffer,0,3);  
   }
 }
-
-
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/ 
 
 

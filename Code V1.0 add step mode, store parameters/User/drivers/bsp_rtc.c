@@ -1,21 +1,3 @@
-/**
-  ******************************************************************************
-  * @file    bsp_rtc.c
-  * @author  Wireless Protocol Stack Develop-Dept.
-  * @version --
-  * @date    2016/1/28 ÐÇÆÚËÄ,Administrator
-  * @brief  This file
-  *
-  * @verbatim  
-  *     
-  ******************************************************************************
-  * @attention
-  *     
-  *     
-  *
-  * <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-  ******************************************************************************
-  */
   
 /* Includes ------------------------------------------------------------------*/
 
@@ -321,8 +303,4 @@ uint8 RTC_Get_Week(uint16 year, uint8 month, uint8 day)
   return(temp2%7);
 }
 
-
-
-
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/ 
 

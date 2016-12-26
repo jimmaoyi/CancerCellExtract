@@ -1,22 +1,4 @@
-/**
-  ******************************************************************************
-  * @file    bsp_timer.c
-  * @author  Wireless Protocol Stack Develop-Dept.
-  * @version --
-  * @date    2016/1/14 ÐÇÆÚËÄ,Administrator
-  * @brief  This file
-  *
-  * @verbatim  
-  *     
-  ******************************************************************************
-  * @attention
-  *     
-  *     
-  *
-  * <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-  ******************************************************************************
-  */
-  
+
 /* Includes ------------------------------------------------------------------*/
 
 #include "stm32f10x.h"
@@ -451,5 +433,4 @@ int32 bsp_GetRunTime(void)
   return runtime;
 }
 
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/ 
 

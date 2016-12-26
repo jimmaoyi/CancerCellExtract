@@ -1,21 +1,4 @@
-/**
-  ******************************************************************************
-  * @file    bsp_key.c
-  * @author  Wireless Protocol Stack Develop-Dept.
-  * @version --
-  * @date    2016/1/14 ÐÇÆÚËÄ,Administrator
-  * @brief  This file
-  *
-  * @verbatim  
-  *     
-  ******************************************************************************
-  * @attention
-  *     
-  *     
-  *
-  * <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-  ******************************************************************************
-  */
+
   
 /* Includes ------------------------------------------------------------------*/
 #include "bsp_key.h"
@@ -133,6 +116,4 @@ void EXTI2_IRQHandler(void)
   }
 }
 
-
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/ 
 

@@ -1,21 +1,3 @@
-/**
-  ******************************************************************************
-  * @file    main.h
-  * @author  Wireless Protocol Stack Develop-Dept.
-  * @version --
-  * @date    2016/1/14 ÐÇÆÚËÄ,Administrator
-  * @brief  This file 
-  *
-  * @verbatim  
-  *
-  ******************************************************************************
-  * @attention
-  *     
-  *     
-  *
-  * <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-  ******************************************************************************
-  */
   
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _main_H
@@ -57,6 +39,8 @@ typedef enum
 extern uint8 StandbyFlag;
 extern uint8 PowerFlag;
 extern uint8 Minute_Ini;
+extern uint8 Motowork_flg;
+extern uint8 pressureOK;   
 extern uint8 statusRefreshed;
 
 extern DisplayRefreshLedStatuse_TypeDef RefreshLedStatuse;
@@ -114,4 +98,4 @@ extern uint16 M4T1;
 #endif
 
 #endif /* _main_H */
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/
+

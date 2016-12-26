@@ -1,21 +1,3 @@
-/**
-  ******************************************************************************
-  * @file    bsp_nearfield.c
-  * @author  Wireless Protocol Stack Develop-Dept.
-  * @version --
-  * @date    2015/12/23 星期三,Administrator
-  * @brief  This file
-  *
-  * @verbatim  
-  *     
-  ******************************************************************************
-  * @attention
-  *     
-  *     
-  *
-  * <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-  ******************************************************************************
-  */
   
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
@@ -23,12 +5,8 @@
 #include "bsp_nearfield.h"
 #include "bsp_usart.h"
 #include "main.h"
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/ 
-/* Private function prototypes -----------------------------------------------*/  
-/* Private functions ---------------------------------------------------------*/
+#include "bsp_beep.h"
+
 /**
   * @fun    void bsp_NearFieldGpioInit
   * @brief  
@@ -109,6 +87,39 @@ void bsp_NearFieldGpioInit(void)
   
 }
 
+void bsp_KeyPA8Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+  EXTI_InitTypeDef EXTI_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;
+  
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
+  
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;   //GPIO_Mode_IPU
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOA, &GPIO_InitStructure); 
+  
+  
+  GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource8); 
+  
+  EXTI_InitStructure.EXTI_Line = EXTI_Line8;
+  EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+  EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
+  EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+  EXTI_Init(&EXTI_InitStructure);
+  
+  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//优先级组2：2位抢占优先级，2为子优先级
+  
+  NVIC_InitStructure.NVIC_IRQChannel = EXTI9_5_IRQn;//中断通道
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;//抢占优先级
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;//子优先级
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;//中断通道使能
+  NVIC_Init(&NVIC_InitStructure);
+  
+}
+
+
 /**
   * @fun    void EXTI0_IRQHandler
   * @brief  按键中断处理函数
@@ -128,5 +139,26 @@ void EXTI15_10_IRQHandler(void)
   }
 }
 
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/ 
+void EXTI9_5_IRQHandler(void)
+{
+  if(EXTI_GetITStatus(EXTI_Line8) != RESET)
+  {
+    EXTI_ClearITPendingBit(EXTI_Line8);//清除EXTI line8中断标志
+    
+    if(GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_8)){
+      if(1 == Motowork_flg){
+      //BEEP_SetDuty(30); //
+      //  pressureOK = 1;
+      
+      }
+    }
+    
+    if(0 == GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_8)){
+    //  BEEP_SetDuty(0);//over pressure,stop moto
+      if(1 == Motowork_flg){
+      pressureOK = 1;
+      }
+    }   
+  }
+}
 

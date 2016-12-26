@@ -1,22 +1,4 @@
-/**
-  ******************************************************************************
-  * @file    bsp_beep.c
-  * @author  Wireless Protocol Stack Develop-Dept.
-  * @version --
-  * @date    2016/2/16 ÐÇÆÚ¶þ,Administrator
-  * @brief  This file
-  *
-  * @verbatim  
-  *     
-  ******************************************************************************
-  * @attention
-  *     
-  *     
-  *
-  * <h2><center>&copy; COPYRIGHT 2015 WuLianGroup</center></h2>
-  ******************************************************************************
-  */
-  
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include "bsp_beep.h"
@@ -134,7 +116,4 @@ uint8_t BEEP_GetDuty(void)
 	return duty;
 }
 
-
-
-/******************* (C) COPYRIGHT 2015 WuLianGroup ********END OF FIL*********/ 
 
