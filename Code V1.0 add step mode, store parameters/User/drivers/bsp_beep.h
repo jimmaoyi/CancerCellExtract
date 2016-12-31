@@ -20,7 +20,7 @@ extern "C" {
 #define MV4(BitVal)  		GPIO_WriteBit(GPIOC,GPIO_Pin_5,BitVal)
 #define MV3(BitVal)  		GPIO_WriteBit(GPIOB,GPIO_Pin_0,BitVal)
 #define EMd(BitVal)  		GPIO_WriteBit(GPIOC,GPIO_Pin_8,BitVal)
-#define EMa(BitVal)  		GPIO_WriteBit(GPIOC,GPIO_Pin_3,BitVal)
+#define EMa(BitVal)  		GPIO_WriteBit(GPIOA,GPIO_Pin_11,BitVal)
 #define EMb(BitVal)  		GPIO_WriteBit(GPIOA,GPIO_Pin_12,BitVal)
 #define EMc(BitVal)  		GPIO_WriteBit(GPIOC,GPIO_Pin_9,BitVal)
 #define EMf(BitVal)  		GPIO_WriteBit(GPIOC,GPIO_Pin_6,BitVal)    
